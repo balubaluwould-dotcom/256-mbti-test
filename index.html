@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>리무의 256가지 MBTI 성격 테스트</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+.container { background: #1e293b; padding: 32px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-width: 520px; width: 100%; text-align: center; border: 1px solid #334155; }
+h1 { font-size: 22px; margin-bottom: 24px; color: #38bdf8; word-break: keep-all; }
+h2 { font-size: 19px; margin-bottom: 20px; color: #f1f5f9; word-break: keep-all; line-height: 1.5; }
+.progress-bar { width: 100%; background: #334155; height: 8px; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8); width: 6.25%; transition: width 0.3s ease; }
+.btn { display: block; width: 100%; padding: 16px; margin: 12px 0; background: #334155; color: #f8fafc; border: 2px solid transparent; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; word-break: keep-all; text-align: left; line-height: 1.4; }
+.btn:hover { background: #475569; border-color: #38bdf8; }
+.hidden { display: none; }
+.badge-container { display: flex; justify-content: center; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
+.type-badge { font-size: 20px; font-weight: 800; color: #38bdf8; background: #0f172a; padding: 10px 18px; border-radius: 10px; border: 1px solid #38bdf8; }
+.title-badge { font-size: 20px; font-weight: 700; color: #f43f5e; margin: 15px 0; display: block; word-break: keep-all; }
+.result-section { text-align: left; background: #0f172a; padding: 20px; border-radius: 12px; margin-top: 15px; border: 1px solid #334155; }
+.result-section h3 { font-size: 15px; color: #818cf8; margin-bottom: 8px; }
+.result-section p { font-size: 14px; line-height: 1.6; color: #cbd5e1; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<div class="container" id="quiz-box">
+<h1 style="font-size: 18px; color: #94a3b8; margin-bottom: 16px;">리무의 256가지 MBTI 성격 테스트</h1>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+<div id="section-tag" style="font-size: 13px; color: #818cf8; font-weight: 700; margin-bottom: 8px;">내면 본체 진단 (1/16)</div>
+<h2 id="question">주말에 아무 약속이 없을 때 느껴지는 내 진짜 기분은?</h2>
+<button class="btn" onclick="answer(0)" id="opt1">조용히 나만의 시간을 즐길 수 있어 신난다.</button>
+<button class="btn" onclick="answer(1)" id="opt2">살짝 심심하고 누구라도 만나고 싶어진다.</button>
+</div>
+
+<div class="container hidden" id="result-box">
+<h1>리무의 256가지 MBTI 성격 테스트 결과</h1>
+<span class="title-badge" id="result-title"></span>
+<div class="badge-container">
+<span class="type-badge" id="result-inner"></span>
+<span style="font-size:24px; color:#64748b; align-self:center;">✕</span>
+<span class="type-badge" id="result-outer"></span>
+</div>
+
+<div class="result-section">
+<h3>🎭 성격 이중성 분석</h3>
+<p id="desc-gap"></p>
+
+<h3>🧠 내면 자아 (본 모습)</h3>
+<p id="desc-inner"></p>
+
+<h3>🌐 사회적 페르소나 (외적 모습)</h3>
+<p id="desc-outer"></p>
+
+<h3>💡 처방 및 가이드</h3>
+<p id="desc-advice"></p>
+</div>
+
+<button class="btn" style="text-align:center; background:#4f46e5; margin-top:20px;" onclick="location.reload()">테스트 다시하기</button>
+</div>
+
+<script>
+const innerDict = {
+"INTJ": "치밀한 전략가이자 독립적인 사색가",
+"INTP": "끊임없이 원리를 탐구하는 아웃사이더 천재",
+"ENTJ": "목표를 향해 거침없이 돌진하는 야망가",
+"ENTP": "새로운 아이디어와 독창성에 목마른 획기주의자",
+"INFJ": "통찰력이 깊고 신념이 뚜렷한 영혼의 조력자",
+"INFP": "신념과 감수성이 풍부한 이상주의 예술가",
+"ENFJ": "타인의 성장을 돕는 따뜻한 리더",
+"ENFP": "열정과 에너지가 넘치는 호기심 대장",
+"ISTJ": "철저하고 신뢰할 수 있는 원칙주의 정돈가",
+"ISFJ": "헌신적이고 세심하게 타인을 챙기는 수호자",
+"ESTJ": "체계와 질서를 정립하는 현실적인 관리자",
+"ESFJ": "친화력과 공감 능력이 뛰어난 사회적 중재자",
+"ISTP": "상황 파악이 빠르고 손재주가 뛰어난 해결사",
+"ISFP": "온화하고 감각적인 자유로운 여유주의자",
+"ESTP": "모험을 즐기고 순발력이 뛰어난 행동파",
+"ESFP": "분위기 메이커이자 순간을 즐기는 에너자이저"
+};
+
+const outerDict = {
+"INTJ": "사회적으로 매우 도도하고 논리 정연하게 처리하는 모습",
+"INTP": "필요할 때만 날카로운 지식을 방출하는 조용한 분석가 모습",
+"ENTJ": "모임을 이끌고 결단력 있게 지시를 내리는 리더의 모습",
+"ENTP": "논쟁을 즐기고 재치 있는 입담을 발휘하는 트릭스터 모습",
+"INFJ": "경청하면서도 조용히 상황을 통찰하고 조언하는 상담가 모습",
+"INFP": "수줍지만 따뜻하고 감성적인 다정다감한 모습",
+"ENFJ": "모든 사람을 아우르고 긍정 에너지를 전파하는 에너자이저 모습",
+"ENFP": "밝고 유쾌하게 주변 분위기를 띄우는 만능 인싸 모습",
+"ISTJ": "약속을 엄수하고 흐트러짐 없는 단정하고 정확한 모습",
+"ISFJ": "상대방의 세세한 필요를 미리 파악해 챙겨주는 세심한 모습",
+"ESTJ": "규칙을 강조하고 리더십 있게 일처리를 추진하는 관리자 모습",
+"ESFJ": "누구에게나 친절하고 다정하게 대화를 주도하는 인싸 모습",
+"ISTP": "쿨하고 덤덤하게 필요한 일만 깔끔하게 처리하는 모습",
+"ISFP": "상대방에게 거부감 없이 편안하고 순응적인 모습",
+"ESTP": "유쾌한 장난기와 거침없는 추진력으로 사람들을 끌어모으는 모습",
+"ESFP": "주변을 시끌벅적하고 즐겁게 만드는 화려한 주인공의 모습"
+};
+
+const questions = [
+{ section: "내면 본체", q: "주말에 아무 약속이 없을 때 느껴지는 내 진짜 기분은?", a1: "조용히 나만의 시간을 즐길 수 있어 신난다.", a2: "살짝 심심하고 누구라도 만나고 싶어진다.", v1: "I", v2: "E" },
+{ section: "내면 본체", q: "복잡한 일을 겪고 완전히 지쳤을 때 필요한 충전법은?", a1: "집에서 혼자 쉬면서 에너지를 회복한다.", a2: "좋아하는 사람들을 만나 수다를 떨며 스트레스를 푼다.", v1: "I", v2: "E" },
+{ section: "내면 본체", q: "혼자 멍 때릴 때 나의 머릿속을 채우는 생각은?", a1: "오늘 할 일이나 최근에 있었던 실제 일들", a2: "'만약 ~라면 어떨까?' 하는 끝없는 엉뚱한 상상", v1: "S", v2: "N" },
+{ section: "내면 본체", q: "책이나 영화를 볼 때 내 본능이 더 끌리는 요소는?", a1: "치밀하고 현실성 있는 스토리와 사실적인 묘사", a2: "은유와 복선이 가득하고 세계관이 독창적인 이야기", v1: "S", v2: "N" },
+{ section: "내면 본체", q: "스스로 중요하다고 생각하는 내 삶의 판단 기준은?", a1: "모순이 없는 객관적인 논리와 인과관계", a2: "나 자신과 타인의 가치관 및 마음의 평화", v1: "T", v2: "F" },
+{ section: "내면 본체", q: "힘든 일을 겪은 친구를 볼 때 내 마음속 진짜 본심은?", a1: "왜 그런 일이 생겼는지 원인부터 차근차근 파악하고 싶다.", a2: "얼마나 힘들었을지 마음이 아프고 감정이 먼저 와닿는다.", v1: "T", v2: "F" },
+{ section: "내면 본체", q: "내 일상의 전반적인 라이프스타일은 어떤가요?", a1: "일정이 계획대로 딱딱 맞물려 돌아갈 때 편안하다.", a2: "그때그때 기분과 상황에 맞춰 자유롭게 움직일 때 편안하다.", v1: "J", v2: "P" },
+{ section: "내면 본체", q: "여행이나 휴가를 떠나기 직전 내 마음가짐은?", a1: "시간대별 동선과 예비 플랜이 준비되어 있어야 안심된다.", a2: "큰 틀만 정해두고 발길 닿는 대로 즐기는 것이 진짜 여행이다.", v1: "J", v2: "P" },
+{ section: "사회적 페르소나", q: "낯선 사람들이 많은 대규모 모임에서 보여주는 내 겉모습은?", a1: "먼저 다가가기보다는 구석에서 아는 사람과 조용히 대화한다.", a2: "먼저 붙임성 있게 인사하고 분위기를 활기차게 이끈다.", v1: "I", v2: "E" },
+{ section: "사회적 페르소나", q: "팀 활동이나 회사/학교 생활에서 남들이 보는 나의 캐릭터는?", a1: "말수가 적고 자기 할 일을 신중하게 챙기는 편이다.", a2: "의견을 적극적으로 내고 대화를 이끄는 편이다.", v1: "I", v2: "E" },
+{ section: "사회적 페르소나", q: "일이나 과제를 설명할 때 타인에게 보여주는 스타일은?", a1: "구체적인 데이터, 사실, 실행 단계를 명확히 전달한다.", a2: "전체적인 개념, 방향성, 미래의 비전을 제시한다.", v1: "S", v2: "N" },
+{ section: "사회적 페르소나", q: "남들과 대화할 때 주로 외부로 이끌어가는 주제는?", a1: "요즘 일어나는 현실적인 사건이나 유용한 실용 정보", a2: "철학적인 질문, 미래의 가능성, 가상의 아이디어", v1: "S", v2: "N" },
+{ section: "사회적 페르소나", q: "동료가 실수했을 때 겉으로 드러내는 나의 반응 방식은?", a1: "실수의 원인을 먼저 분석하고 해결책을 피드백한다.", a2: "당황했을 동료를 다독이고 감정적으로 먼저 위로한다.", v1: "T", v2: "F" },
+{ section: "사회적 페르소나", q: "남들과 갈등이 생겼을 때 외부에 보이는 내 대처 태도는?", a1: "감정을 배제하고 조목조목 논리적으로 따져서 해결하려 한다.", a2: "서로의 상처를 최소화하고 대화로 원만하게 풀어가려 한다.", v1: "T", v2: "F" },
+{ section: "사회적 페르소나", q: "다른 사람들과 프로젝트를 진행할 때 내 일처리 모습은?", a1: "마감일과 체크리스트를 철저히 관리하며 계획대로 진행한다.", a2: "유연하게 상황 변화에 대처하며 즉흥적 아이디어를 적용한다.", v1: "J", v2: "P" },
+{ section: "사회적 페르소나", q: "약속 시간을 정하고 만날 때 나의 외적 행동 방식은?", a1: "미리 약속 시간과 장소를 정하고 늦지 않게 도착한다.", a2: "당일 약속이 유연하게 변경되거나 약속 시간을 융통성 있게 조정한다.", v1: "J", v2: "P" }
+ ];
+
+let currentQ = 0;
+let inner = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+let outer = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+
+function renderQuestion() {
+const q = questions[currentQ];
+document.getElementById('section-tag').innerText = ${q.section} 진단 (${currentQ + 1}/${questions.length}); document.getElementById('progress-fill').style.width = ``${((currentQ + 1) / questions.length) * 100}%;
+document.getElementById('question').innerText = q.q;
+document.getElementById('opt1').innerText = q.a1;
+document.getElementById('opt2').innerText = q.a2;
+}
+
+function answer(choice) {
+const q = questions[currentQ];
+const target = currentQ < 8 ? inner : outer;
+
+const selectedValue = choice === 0 ? q.v1 : q.v2;
+target[selectedValue]++;
+
+currentQ++;
+if (currentQ < questions.length) {
+renderQuestion();
+} else {
+showResult();
+}
+}
+
+function getType(scores) {
+return (scores.E >= scores.I ? 'E' : 'I') +
+(scores.S >= scores.N ? 'S' : 'N') +
+(scores.T >= scores.F ? 'T' : 'F') +
+(scores.J >= scores.P ? 'J' : 'P');
+}
+
+function showResult() {
+document.getElementById('quiz-box').classList.add('hidden');
+document.getElementById('result-box').classList.remove('hidden');
+
+const iType = getType(inner);
+const oType = getType(outer);
+
+document.getElementById('result-inner').innerText = 내면: ${iType}; document.getElementById('result-outer').innerText =페르소나: ${oType};
+
+let title = "";
+if (iType === oType) {
+title = [일치형] 언행일치! 겉과 속이 똑같은 ${iType}; } else if (iType[0] !== oType[0]) { title = iType[0] === 'I' ?[반전형] 속은 내향인인데 겉은 사회적 인싸 (${iType} × ${oType}):[반전형] 겉은 활발하지만 속은 혼자가 좋은 외로운 인싸 (${iType} × ${oType}); } else { title =[입체형] 상황에 따라 맞춰 신중히 진화하는 카멜레온 (${iType} × ${oType})`;
+}
+
+document.getElementById('result-title').innerText = title;
+document.getElementById('desc-inner').innerText = 당신의 진짜 본체는${innerDict[iType]}입니다. 혼자만의 공간에서는 이 성향이 100% 발휘됩니다.; document.getElementById('desc-outer').innerText =반면, 사회생활이나 타인과의 관계에서는 ${outerDict[oType]}로 처세합니다.;
+
+if (iType === oType) {
+document.getElementById('desc-gap').innerText = 내면과 외면의 성격이 완전히 일치합니다. 에너지 소모가 적고 솔직한 처세가 강점이지만, 때로는 사회적 상황에 유연하게 대처하는 기술이 필요할 수 있습니다.;
+document.getElementById('desc-advice').innerText = 본인의 모습을 그대로 유지하되, 상대방의 성향에 맞는 공감이나 피드백을 한 단계 더 고려해주면 완벽합니다.;
+} else {
+document.getElementById('desc-gap').innerText = 내면의 본성(${iType})과 외부에서 보여주는 모습({iType})으로 돌아가 혼자만의 충전 시간을 가져야 사회적 피로도를 예방할 수 있습니다.`;
+}
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
